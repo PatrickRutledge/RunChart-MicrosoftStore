@@ -1,5 +1,9 @@
 # Run Chart Visualization
 
+**Microsoft Store Desktop Application** - Professional statistical process control charts for Windows.
+
+> **📦 This repository contains the dedicated Microsoft Store version** built with Vue.js and packaged as MSIX. For other Run Chart implementations, see [RunChart-Goal](https://github.com/PatrickRutledge/RunChart-Goal).
+
 A professional desktop application for creating statistical process control (SPC) charts, built with Vue.js and packaged for the Microsoft Store.
 
 ## 🚀 Features
