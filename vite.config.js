@@ -12,9 +12,16 @@ export default defineConfig(({ mode }) => {
       assetsDir: 'assets',
       rollupOptions: {
         output: {
-          manualChunks: undefined
+          manualChunks: undefined,
+          // Ensure UTF-8 with BOM for Microsoft Store compliance
+          charset: 'utf8'
         }
-      }
+      },
+      // Microsoft Store requires UTF-8 BOM for all text files
+      target: 'es2020'
+    },
+    esbuild: {
+      charset: 'utf8'
     }
   }
 })

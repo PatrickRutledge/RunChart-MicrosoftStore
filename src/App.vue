@@ -136,7 +136,6 @@ const chartData = computed(() => {
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
-  aspectRatio: 2.5, // Force a wider aspect ratio (width:height = 2.5:1)
   plugins: {
     title: {
       display: true,

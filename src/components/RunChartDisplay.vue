@@ -358,8 +358,9 @@ const downloadFallback = (imgData) => {
 <style scoped>
 .chart-container {
   position: relative;
-  height: 400px;
+  height: 350px;
   width: 100%;
+  min-width: 800px;
   display: flex;
   justify-content: center;
   align-items: center;

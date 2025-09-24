@@ -1,127 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ms-appx-web:; script-src 'self' 'unsafe-inline' 'unsafe-eval' ms-appx-web:; style-src 'self' 'unsafe-inline' ms-appx-web:;">
-    <title>Run Chart Visualization</title>
+    <title>Privacy Policy - Run Chart Visualization</title>
     <style>
-      /* Emergency fallback styles */
-      .emergency-fallback {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto;
-        background: #f5f5f5;
-        border-radius: 8px;
-        margin-top: 20px;
-      }
-      .loading-indicator {
-        text-align: center;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-      }
-      .basic-chart-container {
-        width: 100%;
-        height: 300px;
-        border: 1px solid #ccc;
-        margin: 20px 0;
-        padding: 10px;
-        background: white;
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #1e40af;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+        .last-updated {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        p, li {
+            margin-bottom: 12px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background-color: #dbeafe;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1e40af;
+            margin: 20px 0;
+        }
+        .contact {
+            background-color: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .app-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+        }
+        .app-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e40af;
+        }
     </style>
-  </head>
-  <body>
-    <div id="loading" class="loading-indicator">
-      <h2>Loading Run Chart Visualization...</h2>
-      <p>Initializing application components...</p>
-    </div>
-    
-    <div id="app" style="display: none;"></div>
-    
-    <!-- Emergency fallback UI -->
-    <div id="emergency-fallback" class="emergency-fallback" style="display: none;">
-      <h1>Run Chart Visualization - Basic Mode</h1>
-      <p>The application is running in basic compatibility mode.</p>
-      <div class="basic-chart-container">
-        <h3>Basic Run Chart</h3>
-        <p>Enter your data values (comma separated):</p>
-        <textarea id="basic-data" rows="4" cols="50" placeholder="10,12,11,13,12,14,11,10,12,13"></textarea>
-        <br><br>
-        <button onclick="createBasicChart()">Create Chart</button>
-        <div id="basic-chart-display"></div>
-      </div>
-    </div>
+</head>
+<body>
+    <div class="container">
+        <div class="app-info">
+            <div class="app-name">Run Chart Visualization</div>
+            <div>Professional Statistical Process Control Tool</div>
+        </div>
 
-    <script>
-      // Initialize loading timeout and basic functionality
-      let appLoadTimeout;
-      let appLoaded = false;
-      
-      function showEmergencyFallback() {
-        console.log('Showing emergency fallback UI');
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('app').style.display = 'none';
-        document.getElementById('emergency-fallback').style.display = 'block';
-      }
-      
-      function hideLoadingAndShowApp() {
-        appLoaded = true;
-        clearTimeout(appLoadTimeout);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('emergency-fallback').style.display = 'none';
-      }
-      
-      function createBasicChart() {
-        const data = document.getElementById('basic-data').value;
-        const display = document.getElementById('basic-chart-display');
-        const values = data.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
-        
-        if (values.length === 0) {
-          display.innerHTML = '<p style="color: red;">Please enter valid numeric data.</p>';
-          return;
-        }
-        
-        const mean = values.reduce((a, b) => a + b, 0) / values.length;
-        display.innerHTML = `
-          <h4>Chart Results:</h4>
-          <p><strong>Data Points:</strong> ${values.length}</p>
-          <p><strong>Values:</strong> ${values.join(', ')}</p>
-          <p><strong>Mean:</strong> ${mean.toFixed(2)}</p>
-          <p><strong>Range:</strong> ${Math.min(...values).toFixed(2)} to ${Math.max(...values).toFixed(2)}</p>
-        `;
-      }
-      
-      // Set timeout for emergency fallback
-      appLoadTimeout = setTimeout(function() {
-        if (!appLoaded) {
-          console.error('App failed to load within timeout, showing emergency fallback');
-          showEmergencyFallback();
-        }
-      }, 10000); // 10 second timeout
-      
-      // Global error handler
-      window.addEventListener('error', function(e) {
-        console.error('Global error:', e.error);
-        if (!appLoaded) {
-          showEmergencyFallback();
-        }
-      });
-      
-      window.addEventListener('unhandledrejection', function(e) {
-        console.error('Unhandled promise rejection:', e.reason);
-        if (!appLoaded) {
-          showEmergencyFallback();
-        }
-      });
-      
-      // Expose function for Vue app to call when ready
-      window.vueAppReady = hideLoadingAndShowApp;
-    </script>
-    
-    <script type="module" src="/src/main.js"></script>
-  </body>
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last updated: September 24, 2025</p>
+
+        <div class="highlight">
+            <strong>Privacy First:</strong> Run Chart Visualization is designed with your privacy as our top priority. We collect zero personal data and operate completely offline.
+        </div>
+
+        <h2>Introduction</h2>
+        <p>Run Chart Visualization ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we handle information in our desktop application available through the Microsoft Store.</p>
+
+        <h2>Information Collection</h2>
+        <p><strong>We collect ZERO personal information.</strong></p>
+        <ul>
+            <li>No personal data is collected, stored, or transmitted</li>
+            <li>No user accounts or registration required</li>
+            <li>No analytics or tracking of any kind</li>
+            <li>No network communications for data collection</li>
+            <li>All chart data and settings remain completely local to your device</li>
+        </ul>
+
+        <h2>Data Storage</h2>
+        <p>All application data is stored locally on your Windows device:</p>
+        <ul>
+            <li><strong>Chart Data:</strong> Production numbers, goals, and specifications you enter</li>
+            <li><strong>Application Settings:</strong> Your preferences for chart appearance and behavior</li>
+            <li><strong>Local Only:</strong> No data is ever sent to external servers or cloud services</li>
+            <li><strong>Your Control:</strong> You can clear all data by uninstalling the application</li>
+        </ul>
+
+        <h2>Application Permissions</h2>
+        <p>Our application requires minimal Windows permissions:</p>
+        <ul>
+            <li><strong>File System Access:</strong> Only when you choose to save or export charts</li>
+            <li><strong>Print Access:</strong> Only when you choose to print charts</li>
+            <li><strong>No Network Access:</strong> The app works completely offline</li>
+        </ul>
+
+        <h2>Data Processing</h2>
+        <p>All statistical calculations and chart generation occur locally on your device:</p>
+        <ul>
+            <li>Run chart calculations are performed in real-time on your device</li>
+            <li>Special cause detection algorithms run locally</li>
+            <li>No data is sent to external services for processing</li>
+            <li>Chart images are generated locally when you choose to save or print</li>
+        </ul>
+
+        <h2>Third-Party Services</h2>
+        <p><strong>We use NO third-party services that collect data.</strong></p>
+        <ul>
+            <li>No advertising networks</li>
+            <li>No analytics services</li>
+            <li>No cloud storage providers</li>
+            <li>No social media integrations</li>
+        </ul>
+
+        <h2>Microsoft Store Integration</h2>
+        <p>This application is distributed through the Microsoft Store:</p>
+        <ul>
+            <li>Microsoft Store may collect standard app installation/update metrics</li>
+            <li>We do not have access to any Microsoft Store user data</li>
+            <li>App ratings and reviews are handled entirely by Microsoft</li>
+            <li>For Microsoft's privacy practices, see their Privacy Statement</li>
+        </ul>
+
+        <h2>Children's Privacy</h2>
+        <p>Our application is safe for all ages:</p>
+        <ul>
+            <li>No personal information is requested from users of any age</li>
+            <li>No online features or communications</li>
+            <li>Completely educational and professional tool</li>
+        </ul>
+
+        <h2>Data Security</h2>
+        <p>Since no data leaves your device:</p>
+        <ul>
+            <li>Your data is as secure as your Windows device</li>
+            <li>No risk of data breaches from external servers</li>
+            <li>No network transmission of sensitive information</li>
+            <li>Standard Windows file system security applies</li>
+        </ul>
+
+        <h2>Changes to This Policy</h2>
+        <p>We may update this Privacy Policy to reflect changes in our practices or for legal reasons. We will post any changes on this page with an updated "Last updated" date.</p>
+
+        <h2>Your Rights</h2>
+        <p>Since we collect no personal data:</p>
+        <ul>
+            <li>There is no personal data to access, modify, or delete</li>
+            <li>No data portability concerns</li>
+            <li>Complete control over your local application data</li>
+        </ul>
+
+        <div class="contact">
+            <h2>Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy or our privacy practices, please contact us:</p>
+            <p><strong>Developer:</strong> Patrick Rutledge</p>
+            <p><strong>GitHub:</strong> <a href="https://github.com/PatrickRutledge">https://github.com/PatrickRutledge</a></p>
+            <p><strong>Repository:</strong> <a href="https://github.com/PatrickRutledge/RunChart-MicrosoftStore">RunChart-MicrosoftStore</a></p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280;">
+            <p>Run Chart Visualization - Privacy-First Statistical Process Control</p>
+            <p>Available on the Microsoft Store</p>
+        </div>
+    </div>
+</body>
 </html>

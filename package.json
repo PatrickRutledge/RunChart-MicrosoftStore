@@ -1,6 +1,8 @@
 {
   "name": "run-chart-goallimits",
   "version": "1.0.3",
+  "description": "Professional run chart visualization tool for statistical process control and quality analysis",
+  "author": "Aether Forge",
   "private": true,
   "main": "electron/main.js",
   "homepage": "./",
@@ -65,15 +67,14 @@
           "arch": ["x64", "ia32"]
         },
         {
-          "target": "msix",
+          "target": "appx",
           "arch": ["x64", "ia32", "arm64"]
         }
       ],
-      "icon": "app/Assets/StoreLogo.ico",
-      "publisherName": "Aether Forge",
+      "icon": "store-assets/icons/icon-256.png",
       "verifyUpdateCodeSignature": false
     },
-    "msix": {
+    "appx": {
       "displayName": "Run Chart Visualization",
       "publisher": "CN=80415444-5392-4904-8AC7-7511A51DFC7C",
       "publisherDisplayName": "Aether Forge",
@@ -81,7 +82,9 @@
       "backgroundColor": "#1e3a8a",
       "languages": ["en-US"],
       "showNameOnTiles": true,
-      "setBuildNumber": true
+      "setBuildNumber": true,
+      "applicationId": "RunChartVisualization",
+      "addAutoLaunchExtension": false
     },
     "nsis": {
       "oneClick": false,
