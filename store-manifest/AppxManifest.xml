@@ -7,7 +7,7 @@
   <Identity
     Name="AetherForge.RunChartVisualization"
     Publisher="CN=80415444-5392-4904-8AC7-7511A51DFC7C"
-    Version="1.0.0.0" />
+    Version="1.0.3.0" />
 
   <Properties>
     <DisplayName>Run Chart Visualization</DisplayName>
@@ -16,7 +16,7 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>
@@ -26,7 +26,7 @@
   <Applications>
     <Application
       Id="RunChartVisualization"
-      StartPage="app/index.html">
+      StartPage="ms-appx-web:///app/index.html">
       <uap:VisualElements
         DisplayName="Run Chart Visualization"
         Description="Professional statistical process control charts for manufacturing and quality control"
@@ -38,6 +38,9 @@
           Square310x310Logo="Assets\Square310x310Logo.png"
           Square71x71Logo="Assets\Square71x71Logo.png" />
       </uap:VisualElements>
+      <uap:ApplicationContentUriRules>
+        <uap:Rule Match="ms-appx-web:///app/*" Type="include" WindowsRuntimeAccess="all" />
+      </uap:ApplicationContentUriRules>
     </Application>
   </Applications>
 

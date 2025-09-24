@@ -1,67 +1,34 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onErrorCaptured } from 'vue';
 import RunChartDisplay from './components/RunChartDisplay.vue';
 
+// Error handling
+const hasError = ref(false);
+const errorMessage = ref('');
+
+onErrorCaptured((err, instance, info) => {
+  console.error('Component error captured:', err, info);
+  hasError.value = true;
+  errorMessage.value = err.message || 'An unknown error occurred';
+  return false; // Prevent error from propagating
+});
+
 // Reactive variables for our inputs and chart title
-// Initial values are still here, but reset will clear them
-const chartTitle = ref('Production Throughput Run Chart');
+// Start with example values to show a working chart
+const chartTitle = ref('Production Run Chart Example');
 const unitOfMeasure = ref('Pounds');
-const timeScale = ref('Days');
+const timeScale = ref('Day');
 const goalLine = ref(12);
-const usl = ref(14);
-const lsl = ref(6);
+const usl = ref(15);
+const lsl = ref(8);
 
 // Reactive variable for the raw text input of data
-const rawDataInput = ref('8, 10, 12, 11, 9, 8, 10, 11, 12, 9, 8, 10, 11, 8, 7, 8, 10, 12, 11, 9, 8, 10, 11, 8, 10, 11, 9, 8, 10, 11, 8'); // Pre-fill with your example data
+const rawDataInput = ref('10, 12, 11, 13, 12, 14, 11, 10, 12, 13, 11, 12, 14, 13, 12'); // Example data to show chart
 
 // Reactive variable for input warning message
 const inputWarning = ref(null);
 
-// More Apps modal state
-const showMoreApps = ref(false);
-
-// Portfolio apps data
-const portfolioApps = ref([
-  {
-    name: "Run Chart Analytics",
-    description: "Professional statistical process control charts for manufacturing and quality control",
-    category: "Business & Productivity",
-    status: "Available",
-    platforms: ["Web", "Android", "Windows"],
-    url: "https://run-chart-goal-vue.netlify.app"
-  },
-  {
-    name: "Run Chart Analytics (Android)",
-    description: "Mobile version of Run Chart Analytics for Android devices",
-    category: "Business & Productivity",
-    status: "Available on Play Store",
-    platforms: ["Android"],
-    url: "https://play.google.com/store/apps/details?id=com.patrutledge.runchart"
-  },
-  {
-    name: "Run Chart Analytics (Windows)",
-    description: "Native Windows app with enhanced features and offline support",
-    category: "Business & Productivity",
-    status: "Coming Soon to Microsoft Store",
-    platforms: ["Windows"],
-    url: "#"
-  }
-]);
-
-// Functions for More Apps
-const openMoreApps = () => {
-  showMoreApps.value = true;
-};
-
-const closeMoreApps = () => {
-  showMoreApps.value = false;
-};
-
-const openApp = (app) => {
-  if (app.url && app.url !== '#') {
-    window.open(app.url, '_blank');
-  }
-};
+// Removed More Apps functionality
 
 // --- COMPUTED PROPERTIES FOR CHART ---
 // Parse the raw text input into a numeric array
@@ -169,6 +136,7 @@ const chartData = computed(() => {
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  aspectRatio: 2.5, // Force a wider aspect ratio (width:height = 2.5:1)
   plugins: {
     title: {
       display: true,
@@ -182,7 +150,8 @@ const chartOptions = computed(() => ({
       intersect: false,
     },
     legend: {
-      display: true
+      display: true,
+      position: 'bottom' // Move legend to bottom to save horizontal space
     }
   },
   scales: {
@@ -199,65 +168,87 @@ const chartOptions = computed(() => ({
       },
       beginAtZero: true
     }
+  },
+  layout: {
+    padding: {
+      left: 10,
+      right: 10,
+      top: 10,
+      bottom: 10
+    }
   }
 }));
 
-// UPDATED: Function to reset all inputs to their default (blank) values
+// Function to reset all inputs to blank values (clear all fields)
 const resetInputs = () => {
-  chartTitle.value = ''; // Blank
-  unitOfMeasure.value = ''; // Blank
-  timeScale.value = ''; // Blank
-  goalLine.value = null; // Blank for number inputs to show placeholder
-  usl.value = null; // Blank
-  lsl.value = null; // Blank
-  rawDataInput.value = ''; // Blank
+  chartTitle.value = '';
+  unitOfMeasure.value = '';
+  timeScale.value = '';
+  goalLine.value = null;
+  usl.value = null;
+  lsl.value = null;
+  rawDataInput.value = '';
   inputWarning.value = null; // Clear any warnings
 };
 </script>
 
 <template>
   <div id="app-container">
-    <h1>{{ chartTitle || 'Production Throughput Run Chart' }}</h1> <div class="controls-section">
+    <!-- Error fallback display -->
+    <div v-if="hasError" class="error-container">
+      <h2>Application Error</h2>
+      <p>The application encountered an error and is running in safe mode.</p>
+      <p><strong>Error:</strong> {{ errorMessage }}</p>
+      <button @click="hasError = false; errorMessage = ''" style="margin-top: 10px; padding: 8px 16px;">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Normal application content -->
+    <div v-else>
+      <h1>{{ chartTitle || 'Run Chart Visualization' }}</h1> 
+      <div class="controls-section">
       <div class="input-group">
-        <p class="input-instruction">Paste comma separated values here:</p>
-        <textarea id="rawData" v-model="rawDataInput" rows="5" cols="50" placeholder="e.g., 8, 10, 12, 11, 9,..."></textarea>
+        <p class="input-instruction">Enter your data values (comma separated):</p>
+        <textarea id="rawData" v-model="rawDataInput" rows="5" cols="50" placeholder="Example: 8, 10, 12, 11, 9, 8, 10, 11, 12, 9
+
+Paste your production data here, separated by commas."></textarea>
       </div>
 
       <p v-if="inputWarning" class="warning-message">{{ inputWarning }}</p>
 
       <div class="input-group">
         <label for="chartTitle">Chart Title:</label>
-        <input type="text" id="chartTitle" v-model="chartTitle" size="40" placeholder="e.g., Production Report" />
+        <input type="text" id="chartTitle" v-model="chartTitle" size="40" placeholder="Enter your chart title (e.g., Production Report)" />
       </div>
 
       <div class="input-group">
         <label for="unitOfMeasure">Unit of Measure:</label>
-        <input type="text" id="unitOfMeasure" v-model="unitOfMeasure" placeholder="e.g., Pounds" />
+        <input type="text" id="unitOfMeasure" v-model="unitOfMeasure" placeholder="e.g., Pounds, Units, Gallons" />
       </div>
 
       <div class="input-group">
-        <label for="timeScale">Unit of Time:</label>
-        <input type="text" id="timeScale" v-model="timeScale" placeholder="e.g., Days" />
+        <label for="timeScale">Time Period:</label>
+        <input type="text" id="timeScale" v-model="timeScale" placeholder="e.g., Day, Week, Hour" />
       </div>
 
       <div class="input-group">
-        <label for="goalLine">Goal:</label>
-        <input type="number" id="goalLine" v-model.number="goalLine" placeholder="e.g., 12" />
+        <label for="goalLine">Goal Line:</label>
+        <input type="number" id="goalLine" v-model.number="goalLine" placeholder="Target value (e.g., 12)" />
       </div>
 
       <div class="input-group">
-        <label for="usl">Max Production:</label>
-        <input type="number" id="usl" v-model.number="usl" placeholder="e.g., 14" />
+        <label for="usl">Upper Limit (USL):</label>
+        <input type="number" id="usl" v-model.number="usl" placeholder="Maximum acceptable value" />
       </div>
 
       <div class="input-group">
-        <label for="lsl">Minimum Production:</label>
-        <input type="number" id="lsl" v-model.number="lsl" placeholder="e.g., 6" />
+        <label for="lsl">Lower Limit (LSL):</label>
+        <input type="number" id="lsl" v-model.number="lsl" placeholder="Minimum acceptable value" />
       </div>
 
       <div class="button-group">
-        <button @click="resetInputs">Reset All Inputs</button>
-        <button @click="openMoreApps" class="more-apps-btn">More Apps by Pat Rutledge</button>
+        <button @click="resetInputs">Reset All Fields</button>
       </div>
 
     </div>
@@ -266,50 +257,37 @@ const resetInputs = () => {
       <RunChartDisplay :chartData="chartData" :chartOptions="chartOptions" />
     </div>
 
-    <!-- More Apps Section -->
-    <div class="more-apps-section">
-      <h2>More Apps in Our Portfolio</h2>
-      <div class="app-list">
-        <div v-for="app in portfolioApps" :key="app.name" class="app-item">
-          <h3>{{ app.name }}</h3>
-          <p>{{ app.description }}</p>
-          <p><strong>Category:</strong> {{ app.category }}</p>
-          <p><strong>Status:</strong> {{ app.status }}</p>
-          <p><strong>Platforms:</strong> {{ app.platforms.join(', ') }}</p>
-          <button @click="openApp(app)">Open App</button>
-        </div>
-      </div>
-      <button class="close-more-apps" @click="closeMoreApps">Close</button>
-    </div>
 
-    <!-- Overlay for More Apps -->
-    <div v-if="showMoreApps" class="overlay" @click="closeMoreApps">
-      <div class="overlay-content" @click.stop>
-        <span class="close" @click="closeMoreApps">&times;</span>
-        <h2>More Apps in Our Portfolio</h2>
-        <div class="app-list">
-          <div v-for="app in portfolioApps" :key="app.name" class="app-item">
-            <h3>{{ app.name }}</h3>
-            <p>{{ app.description }}</p>
-            <p><strong>Category:</strong> {{ app.category }}</p>
-            <p><strong>Status:</strong> {{ app.status }}</p>
-            <p><strong>Platforms:</strong> {{ app.platforms.join(', ') }}</p>
-            <button @click="openApp(app)">Open App</button>
-          </div>
-        </div>
-        <button class="close-more-apps" @click="closeMoreApps">Close</button>
-      </div>
-    </div>
-
-  </div>
+    </div> <!-- End normal application content -->
+  </div> <!-- End app-container -->
 </template>
 
 <style scoped>
+/* Error handling styles */
+.error-container {
+  background-color: #ffe6e6;
+  border: 2px solid #ff6b6b;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.error-container h2 {
+  color: #d63031;
+  margin-top: 0;
+}
+
+.error-container p {
+  color: #2d3436;
+  margin: 10px 0;
+}
+
 /* Existing styles */
 #app-container {
   font-family: Arial, sans-serif;
   padding: 20px;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -399,18 +377,10 @@ h1 {
   background-color: #0056b3;
 }
 
-.more-apps-btn {
-  background-color: #28a745 !important;
-}
-
-.more-apps-btn:hover {
-  background-color: #218838 !important;
-}
-
 .chart-section {
   border: 1px solid #e0e0e0;
   padding: 20px;
-  min-height: 400px;
+  min-height: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -419,74 +389,10 @@ h1 {
   border-radius: 8px;
 }
 
-/* More Apps styles */
-.more-apps-section {
-  margin-top: 30px;
+.chart-section:empty::before {
+  content: 'Enter data above to generate your run chart';
+  color: #999;
+  font-style: italic;
 }
 
-.app-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.app-item {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  transition: transform 0.2s;
-}
-
-.app-item:hover {
-  transform: translateY(-2px);
-}
-
-.close-more-apps {
-  display: block;
-  margin: 20px auto 0;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-}
-
-.close-more-apps:hover {
-  background-color: #0056b3;
-}
-
-/* Overlay styles */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.overlay-content {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.5em;
-  cursor: pointer;
-}
 </style>

@@ -1,14 +1,22 @@
 {
   "name": "run-chart-goallimits",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": true,
-  "type": "module",
+  "main": "electron/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "build:store": "vite build --mode store",
-    "package:store": "npm run build:store"
+    "package:store": "npm run build:store",
+    "electron": "electron .",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
+    "electron:build": "npm run build && electron .",
+    "electron:pack": "npm run build && electron-builder",
+    "electron:dist": "npm run build && electron-builder --publish=never",
+    "electron:pack-win": "npm run build && electron-builder --win",
+    "electron:pack-msix": "npm run build && electron-builder --win --config.win.target=msix"
   },
   "dependencies": {
     "chart.js": "^4.3.3",
@@ -23,6 +31,64 @@
     "@capacitor/filesystem": "^7.1.2",
     "@capacitor/share": "^7.0.1",
     "@vitejs/plugin-vue": "^5.2.3",
-    "vite": "^6.2.4"
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
+    "electron": "^38.1.2",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^4.0.1",
+    "vite": "^6.2.4",
+    "wait-on": "^9.0.1"
+  },
+  "build": {
+    "appId": "com.aetherforge.runchartvisualization",
+    "productName": "Run Chart Visualization",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "app/Assets",
+        "to": "assets",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "msix",
+          "arch": ["x64", "ia32", "arm64"]
+        }
+      ],
+      "icon": "app/Assets/StoreLogo.ico",
+      "publisherName": "Aether Forge",
+      "verifyUpdateCodeSignature": false
+    },
+    "msix": {
+      "displayName": "Run Chart Visualization",
+      "publisher": "CN=80415444-5392-4904-8AC7-7511A51DFC7C",
+      "publisherDisplayName": "Aether Forge",
+      "identityName": "AetherForge.RunChartVisualization",
+      "backgroundColor": "#1e3a8a",
+      "languages": ["en-US"],
+      "showNameOnTiles": true,
+      "setBuildNumber": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Run Chart Visualization"
+    }
   }
 }

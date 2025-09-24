@@ -1,13 +1,127 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ms-appx-web:; script-src 'self' 'unsafe-inline' 'unsafe-eval' ms-appx-web:; style-src 'self' 'unsafe-inline' ms-appx-web:;">
+    <title>Run Chart Visualization</title>
+    <style>
+      /* Emergency fallback styles */
+      .emergency-fallback {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        background: #f5f5f5;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+      .loading-indicator {
+        text-align: center;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .basic-chart-container {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #ccc;
+        margin: 20px 0;
+        padding: 10px;
+        background: white;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="loading" class="loading-indicator">
+      <h2>Loading Run Chart Visualization...</h2>
+      <p>Initializing application components...</p>
+    </div>
+    
+    <div id="app" style="display: none;"></div>
+    
+    <!-- Emergency fallback UI -->
+    <div id="emergency-fallback" class="emergency-fallback" style="display: none;">
+      <h1>Run Chart Visualization - Basic Mode</h1>
+      <p>The application is running in basic compatibility mode.</p>
+      <div class="basic-chart-container">
+        <h3>Basic Run Chart</h3>
+        <p>Enter your data values (comma separated):</p>
+        <textarea id="basic-data" rows="4" cols="50" placeholder="10,12,11,13,12,14,11,10,12,13"></textarea>
+        <br><br>
+        <button onclick="createBasicChart()">Create Chart</button>
+        <div id="basic-chart-display"></div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize loading timeout and basic functionality
+      let appLoadTimeout;
+      let appLoaded = false;
+      
+      function showEmergencyFallback() {
+        console.log('Showing emergency fallback UI');
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('emergency-fallback').style.display = 'block';
+      }
+      
+      function hideLoadingAndShowApp() {
+        appLoaded = true;
+        clearTimeout(appLoadTimeout);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('emergency-fallback').style.display = 'none';
+      }
+      
+      function createBasicChart() {
+        const data = document.getElementById('basic-data').value;
+        const display = document.getElementById('basic-chart-display');
+        const values = data.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+        
+        if (values.length === 0) {
+          display.innerHTML = '<p style="color: red;">Please enter valid numeric data.</p>';
+          return;
+        }
+        
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        display.innerHTML = `
+          <h4>Chart Results:</h4>
+          <p><strong>Data Points:</strong> ${values.length}</p>
+          <p><strong>Values:</strong> ${values.join(', ')}</p>
+          <p><strong>Mean:</strong> ${mean.toFixed(2)}</p>
+          <p><strong>Range:</strong> ${Math.min(...values).toFixed(2)} to ${Math.max(...values).toFixed(2)}</p>
+        `;
+      }
+      
+      // Set timeout for emergency fallback
+      appLoadTimeout = setTimeout(function() {
+        if (!appLoaded) {
+          console.error('App failed to load within timeout, showing emergency fallback');
+          showEmergencyFallback();
+        }
+      }, 10000); // 10 second timeout
+      
+      // Global error handler
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error);
+        if (!appLoaded) {
+          showEmergencyFallback();
+        }
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+        if (!appLoaded) {
+          showEmergencyFallback();
+        }
+      });
+      
+      // Expose function for Vue app to call when ready
+      window.vueAppReady = hideLoadingAndShowApp;
+    </script>
+    
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

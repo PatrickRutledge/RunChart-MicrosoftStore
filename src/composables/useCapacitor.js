@@ -11,18 +11,29 @@ export function useCapacitor() {
   const platform = ref('')
 
   onMounted(() => {
-    isNative.value = Capacitor.isNativePlatform()
-    platform.value = Capacitor.getPlatform()
+    try {
+      isNative.value = Capacitor.isNativePlatform()
+      platform.value = Capacitor.getPlatform()
 
-    if (isNative.value) {
-      initializeApp()
+      if (isNative.value) {
+        initializeApp().catch(error => {
+          console.error('Failed to initialize Capacitor app:', error)
+        })
+      }
+    } catch (error) {
+      console.error('Error detecting Capacitor platform:', error)
+      // Fallback to web platform
+      isNative.value = false
+      platform.value = 'web'
     }
   })
 
   async function initializeApp() {
     try {
       // Hide splash screen
-      await SplashScreen.hide()
+      if (Capacitor.isPluginAvailable('SplashScreen')) {
+        await SplashScreen.hide()
+      }
 
       // Set status bar style
       if (Capacitor.isPluginAvailable('StatusBar')) {
